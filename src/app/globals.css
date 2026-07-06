@@ -1,0 +1,393 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-vt323);
+  --font-mono: var(--font-share-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ============================================================= *
+ *  CRT THEME — pure black, phosphor green, soft green, cyan
+ * ============================================================= */
+:root {
+  --radius: 0.25rem;
+
+  /* CRT palette */
+  --crt-black: #000000;
+  --crt-green: #00ff66;
+  --crt-soft: #7dffb3;
+  --crt-cyan: #00e5ff;
+  --crt-amber: #ffb000;
+  --crt-dim: #0a3a1c;
+
+  /* shadcn-compatible overrides (kept minimal, dark CRT) */
+  --background: #000000;
+  --foreground: var(--crt-green);
+  --card: #000000;
+  --card-foreground: var(--crt-green);
+  --popover: #000000;
+  --popover-foreground: var(--crt-green);
+  --primary: var(--crt-green);
+  --primary-foreground: #000000;
+  --secondary: #06120a;
+  --secondary-foreground: var(--crt-soft);
+  --muted: #05100a;
+  --muted-foreground: #2f8a55;
+  --accent: var(--crt-cyan);
+  --accent-foreground: #000000;
+  --destructive: #ff3b3b;
+  --border: rgba(0, 255, 102, 0.22);
+  --input: rgba(0, 255, 102, 0.18);
+  --ring: var(--crt-green);
+  --chart-1: var(--crt-green);
+  --chart-2: var(--crt-soft);
+  --chart-3: var(--crt-cyan);
+  --chart-4: var(--crt-amber);
+  --chart-5: #2f8a55;
+  --sidebar: #000000;
+  --sidebar-foreground: var(--crt-green);
+  --sidebar-primary: var(--crt-green);
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #06120a;
+  --sidebar-accent-foreground: var(--crt-soft);
+  --sidebar-border: rgba(0, 255, 102, 0.22);
+  --sidebar-ring: var(--crt-green);
+
+  /* CRT effect tunables */
+  --scanline-size: 3px;
+  --flicker-opacity: 0.045;
+  --glow-strength: 1px;
+  --barrel-scale: 38;
+}
+
+.dark {
+  /* The whole app is permanently dark CRT; keep vars identical. */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    outline-color: color-mix(in srgb, var(--crt-green) 45%, transparent);
+  }
+  html,
+  body {
+    background: #000000;
+    color: var(--crt-green);
+    overscroll-behavior: none;
+  }
+  body {
+    font-family: var(--font-share-mono), "Share Tech Mono", ui-monospace, monospace;
+    letter-spacing: 0.04em;
+    /* Subtle global phosphor jitter */
+    animation: crt-global-flicker 6s steps(60) infinite;
+  }
+  ::selection {
+    background: var(--crt-green);
+    color: #000000;
+  }
+  /* Scrollbars styled like old terminals */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 102, 0.25);
+    border: 1px solid rgba(0, 255, 102, 0.4);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 102, 0.5);
+  }
+}
+
+/* ============================================================= *
+ *  TYPOGRAPHY HELPERS
+ * ============================================================= */
+.font-pixel {
+  font-family: var(--font-vt323), "VT323", monospace;
+  letter-spacing: 0.02em;
+}
+.font-mono-crt {
+  font-family: var(--font-share-mono), "Share Tech Mono", ui-monospace, monospace;
+}
+
+.text-glow {
+  text-shadow:
+    0 0 1px var(--crt-green),
+    0 0 4px rgba(0, 255, 102, 0.55),
+    0 0 12px rgba(0, 255, 102, 0.35);
+}
+.text-glow-soft {
+  text-shadow:
+    0 0 1px var(--crt-soft),
+    0 0 6px rgba(125, 255, 179, 0.4);
+}
+.text-glow-cyan {
+  text-shadow:
+    0 0 1px var(--crt-cyan),
+    0 0 6px rgba(0, 229, 255, 0.45),
+    0 0 14px rgba(0, 229, 255, 0.25);
+}
+.text-glow-amber {
+  text-shadow:
+    0 0 1px var(--crt-amber),
+    0 0 6px rgba(255, 176, 0, 0.4);
+}
+
+/* ============================================================= *
+ *  CRT ANIMATIONS
+ * ============================================================= */
+
+/* Gentle global brightness flicker (whole body) */
+@keyframes crt-global-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.94; }
+  94% { opacity: 1; }
+  96% { opacity: 0.97; }
+  97% { opacity: 1; }
+}
+
+/* Scanline drift — horizontal lines slowly crawl */
+@keyframes scanline-drift {
+  0% { background-position-y: 0; }
+  100% { background-position-y: var(--scanline-size); }
+}
+
+/* The rolling brightness bar that sweeps the screen (CRT redraw) */
+@keyframes crt-refresh-sweep {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Phosphor cursor blink */
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.cursor-block {
+  display: inline-block;
+  width: 0.6ch;
+  height: 1em;
+  background: var(--crt-green);
+  box-shadow: 0 0 6px var(--crt-green);
+  vertical-align: text-bottom;
+  animation: cursor-blink 1s steps(1) infinite;
+}
+
+/* Soft flicker for single elements (status lights etc.) */
+@keyframes flicker-soft {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 1; }
+  42% { opacity: 0.55; }
+  43% { opacity: 1; }
+  77% { opacity: 1; }
+  78% { opacity: 0.7; }
+  79% { opacity: 1; }
+}
+
+/* Glitch text — RGB split + slice */
+@keyframes glitch-x {
+  0% { clip-path: inset(0 0 85% 0); transform: translate(0); }
+  20% { clip-path: inset(40% 0 40% 0); transform: translate(-3px, 0); }
+  40% { clip-path: inset(70% 0 10% 0); transform: translate(3px, 0); }
+  60% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 0); }
+  80% { clip-path: inset(55% 0 25% 0); transform: translate(2px, 0); }
+  100% { clip-path: inset(0 0 85% 0); transform: translate(0); }
+}
+
+/* Power-on horizontal line collapse */
+@keyframes power-on-line {
+  0% { transform: scaleY(0.001) scaleX(0.4); opacity: 0; }
+  10% { transform: scaleY(0.002) scaleX(1); opacity: 1; }
+  35% { transform: scaleY(0.01) scaleX(1); opacity: 1; }
+  70% { transform: scaleY(1) scaleX(1); opacity: 1; }
+  100% { transform: scaleY(1) scaleX(1); opacity: 1; }
+}
+
+/* Tracking noise jitter */
+@keyframes tracking-jitter {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-2px); }
+  50% { transform: translateY(1px); }
+  75% { transform: translateY(-1px); }
+}
+
+/* Vertical hold roll (the picture rolls like a mis-tuned TV) */
+@keyframes vhold-roll {
+  0% { transform: translateY(-30%); }
+  100% { transform: translateY(30%); }
+}
+
+/* Slow scan brightness breathing */
+@keyframes scan-breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* Phosphor afterimage fade for typed text */
+@keyframes phosphor-in {
+  0% { opacity: 0; filter: blur(1.5px); }
+  60% { opacity: 0.9; filter: blur(0.4px); }
+  100% { opacity: 1; filter: blur(0); }
+}
+
+/* ============================================================= *
+ *  CRT EFFECT LAYERS (utility classes for overlay divs)
+ * ============================================================= */
+
+/* Scanlines: thin repeating horizontal lines, plus a slow drift */
+.crt-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.55) 2px,
+    rgba(0, 0, 0, 0.55) 3px
+  );
+  background-size: 100% var(--scanline-size);
+  animation: scanline-drift 1.6s linear infinite;
+  mix-blend-mode: multiply;
+}
+
+/* Aperture grille — vertical RGB phosphor stripes (very subtle) */
+.crt-aperture {
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(0, 255, 102, 0.06) 0px,
+    rgba(0, 255, 102, 0.06) 1px,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 0, 0, 0) 3px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.6;
+}
+
+/* Vignette: darkens corners — primary cue for curved glass */
+.crt-vignette {
+  background:
+    radial-gradient(
+      120% 120% at 50% 50%,
+      rgba(0, 0, 0, 0) 38%,
+      rgba(0, 0, 0, 0.35) 70%,
+      rgba(0, 0, 0, 0.85) 100%
+    );
+}
+
+/* Center phosphor bloom — brighter middle, sells the bulge */
+.crt-bloom {
+  background: radial-gradient(
+    90% 90% at 50% 45%,
+    rgba(0, 255, 102, 0.08) 0%,
+    rgba(0, 255, 102, 0.03) 35%,
+    rgba(0, 0, 0, 0) 70%
+  );
+  mix-blend-mode: screen;
+}
+
+/* Top glass reflection */
+.crt-reflection {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.015) 18%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  mix-blend-mode: screen;
+}
+
+/* Flicker overlay — animated opacity layer */
+.crt-flicker {
+  background: rgba(0, 255, 102, 0.02);
+  animation: flicker-soft 5s infinite;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Soft edge blur mask around the screen */
+.crt-edge-blur {
+  box-shadow:
+    inset 0 0 60px 8px rgba(0, 0, 0, 0.9),
+    inset 0 0 120px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================================= *
+ *  GLITCH UTILITIES
+ * ============================================================= */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.glitch-text::before {
+  color: var(--crt-cyan);
+  transform: translate(-2px, 0);
+  mix-blend-mode: screen;
+  animation: glitch-x 2.6s infinite linear alternate;
+  opacity: 0.7;
+}
+.glitch-text::after {
+  color: #ff2d55;
+  transform: translate(2px, 0);
+  mix-blend-mode: screen;
+  animation: glitch-x 3.1s infinite linear alternate-reverse;
+  opacity: 0.55;
+}
+
+/* accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .crt-scanlines { animation: none; }
+}
