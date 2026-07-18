@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCRTStore } from "@/hooks/useCRTStore";
 import { useSound } from "@/hooks/useSound";
@@ -19,7 +19,7 @@ import TypewriterText from "@/components/shared/TypewriterText";
  *   memory    → memory check lines (typed)
  *   diag      → diagnostics + beeps
  *   online    → SYSTEM ONLINE / RESEARCH TERMINAL 07 / STATUS: ONLINE
- *   prompt    → "SO, WHAT DO YOU FEEL?" + blinking cursor, then PRESS ENTER
+ *   prompt    → "SO, WHAT DO YOU FEEL?" + blinking cursor, then tap/click or press Enter
  *   ready     → handed off to the main experience
  * ----------------------------------------------------------------------------
  */
@@ -33,7 +33,7 @@ export default function BootSequence() {
   const [staticOn, setStaticOn] = useState(false);
 
   // Begin the chain on first user gesture
-  const begin = () => {
+  const begin = useCallback(() => {
     if (startedRef.current) return;
     startedRef.current = true;
     play("powerOn");
@@ -48,9 +48,15 @@ export default function BootSequence() {
       setStaticOn(false);
       setBootPhase("memory");
     }, 1500);
-  };
+  }, [play, setBootPhase]);
 
-  // Keyboard: Enter/Space/click all begin; Enter in prompt phase → ready
+  const completePrompt = useCallback(() => {
+    play("relayClick");
+    play("beep");
+    setBootPhase("ready");
+  }, [play, setBootPhase]);
+
+  // Keyboard: any key begins; Enter/Space complete the final prompt.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (bootPhase === "off") {
@@ -59,14 +65,12 @@ export default function BootSequence() {
       }
       if (bootPhase === "prompt" && (e.key === "Enter" || e.key === " ")) {
         e.preventDefault();
-        play("relayClick");
-        play("beep");
-        setBootPhase("ready");
+        completePrompt();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [bootPhase]);
+  }, [bootPhase, begin, completePrompt]);
 
   // Phase auto-advance chains
   useEffect(() => {
@@ -100,10 +104,12 @@ export default function BootSequence() {
   return (
     <div
       className="absolute inset-0 z-20 flex items-center justify-center bg-black"
-      onClick={bootPhase === "off" ? begin : undefined}
+      onClick={
+        bootPhase === "off" ? begin : bootPhase === "prompt" ? completePrompt : undefined
+      }
       role="button"
       tabIndex={0}
-      aria-label="Power on the monitor"
+      aria-label={bootPhase === "prompt" ? "Enter the portfolio" : "Power on the monitor"}
     >
       <AnimatePresence mode="wait">
         {/* OFF — invitation to power on */}
@@ -243,7 +249,7 @@ export default function BootSequence() {
                 cursorAfter
               />
               <motion.div
-                className="mt-12 font-mono-crt text-xs tracking-[0.5em] text-[var(--crt-soft)] text-glow-soft sm:text-sm"
+                className="mt-12 font-mono-crt text-xs tracking-[0.2em] text-[var(--crt-soft)] text-glow-soft sm:text-sm sm:tracking-[0.5em]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0.2, 0.9, 0.2] }}
                 transition={{ duration: 1.6, repeat: Infinity, delay: 2.2 }}
@@ -256,7 +262,7 @@ export default function BootSequence() {
                 animate={{ opacity: 0.4 }}
                 transition={{ delay: 2.4 }}
               >
-                [ ENTER ]
+                [ TAP SCREEN / ENTER ]
               </motion.div>
             </motion.div>
           </BootPanel>

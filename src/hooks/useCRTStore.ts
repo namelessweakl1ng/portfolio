@@ -10,7 +10,7 @@ export type BootPhase =
   | "memory" // memory check
   | "diag" // diagnostics
   | "online" // SYSTEM ONLINE
-  | "prompt" // SO, WHAT DO YOU FEEL? + PRESS ENTER
+  | "prompt" // SO, WHAT DO YOU FEEL? + TAP SCREEN OR PRESS ENTER
   | "ready"; // experience begins
 
 type CRTState = {

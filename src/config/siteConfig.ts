@@ -563,7 +563,7 @@ export const siteConfig = {
     facility: "BLACKWOOD CYBERNETICS LAB — SUBLEVEL B",
     recovered: "RECOVERED UNIT — EST. 1983",
     promptQuestion: "CONNECTED.",
-    promptEnter: "PRESS ENTER",
+    promptEnter: "TAP SCREEN OR PRESS ENTER",
     memoryLines: [
       "CHECKING MEMORY BANKS...",
       "RAM...... 65536 KB .... OK",
