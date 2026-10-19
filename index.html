@@ -266,7 +266,7 @@
   }
   .world-top { min-height: 34px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 6px 8px; font-size: 12px; letter-spacing: .06em; color: var(--frame-text); font-weight: 500; }
   .world-top span:last-child { color: var(--green); font-weight: 600; }
-  .scene { position: relative; overflow: hidden; aspect-ratio: 1.18; max-width: 100%; background: #8dbdb3; border: 2px solid #111b10; cursor: pointer; }
+  .scene { position: relative; overflow: hidden; aspect-ratio: 320 / 336; max-width: 100%; background: #8dbdb3; border: 2px solid #111b10; cursor: pointer; }
   canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
   .scene-hud { position: absolute; top: 12px; left: 12px; max-width: calc(100% - 24px); padding: 5px 9px; font-size: 12px; color: #fff; text-shadow: 1px 1px #152016; background: #112117b8; }
   .scene-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 4px 2px; font-size: 12px; color: var(--frame-text); }
@@ -383,8 +383,7 @@
   /* Player card */
   .about-text { font-size: 14px; color: var(--muted); margin: 20px 0 0; }
   .about-heading { display: flex; gap: 16px; align-items: center; }
-  .avatar { width: 56px; height: 56px; flex-shrink: 0; background: #c59169; border-top: 14px solid #493126; border-bottom: 9px solid #614331; position: relative; box-shadow: 4px 4px 0 var(--shadow); }
-  .avatar::before { content: ""; position: absolute; width: 9px; height: 7px; background: #b6e9ef; left: 9px; top: 10px; box-shadow: 28px 0 #b6e9ef; }
+  .avatar { width: 56px; height: 56px; flex-shrink: 0; display: block; background: var(--inset); box-shadow: 4px 4px 0 var(--shadow); }
   .about-heading h3 { margin: 0; font-family: var(--display); font-size: 22px; line-height: 1.2; }
   .about-heading span { font-size: 12px; color: var(--gold); letter-spacing: .05em; font-weight: 600; }
   .inventory { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -777,7 +776,7 @@
           <span>● LIVE</span>
         </div>
         <div class="scene" id="scene">
-          <canvas id="worldCanvas" width="320" height="272" role="img" aria-label="Animated Minecraft-inspired pixel world with a daylight bee, torchlit zombie-villager cave, and a Creeper chasing the explorer, causing a brief damage flash before the ground regenerates"></canvas>
+          <canvas id="worldCanvas" width="320" height="336" role="img" aria-label="Animated Minecraft-inspired pixel world with a daylight bee, torchlit zombie-villager cave, and a Creeper chasing the explorer, causing a brief damage flash before the ground regenerates"></canvas>
           <div class="scene-hud" id="sceneHud">OVERWORLD / DAY 01</div>
         </div>
         <div class="scene-controls">
@@ -935,7 +934,7 @@
       <div class="split">
         <div class="panel">
           <div class="about-heading">
-            <div class="avatar" aria-hidden="true"></div>
+            <svg class="avatar" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#16110f"/><rect x="3" y="1" width="10" height="1" fill="#16110f"/><rect x="2" y="2" width="12" height="1" fill="#16110f"/><rect x="3" y="3" width="10" height="1" fill="#16110f"/><rect x="3" y="4" width="1" height="1" fill="#16110f"/><rect x="4" y="4" width="8" height="1" fill="#a86f4c"/><rect x="12" y="4" width="1" height="1" fill="#16110f"/><rect x="4" y="5" width="1" height="1" fill="#a86f4c"/><rect x="5" y="5" width="2" height="1" fill="#16110f"/><rect x="7" y="5" width="2" height="1" fill="#a86f4c"/><rect x="9" y="5" width="2" height="1" fill="#16110f"/><rect x="11" y="5" width="1" height="1" fill="#a86f4c"/><rect x="4" y="6" width="1" height="1" fill="#a86f4c"/><rect x="5" y="6" width="1" height="1" fill="#f0ebe2"/><rect x="6" y="6" width="1" height="1" fill="#1a0f0a"/><rect x="7" y="6" width="2" height="1" fill="#a86f4c"/><rect x="9" y="6" width="1" height="1" fill="#f0ebe2"/><rect x="10" y="6" width="1" height="1" fill="#1a0f0a"/><rect x="11" y="6" width="1" height="1" fill="#a86f4c"/><rect x="3" y="7" width="9" height="1" fill="#a86f4c"/><rect x="12" y="7" width="1" height="1" fill="#e8e8f0"/><rect x="4" y="8" width="3" height="1" fill="#a86f4c"/><rect x="7" y="8" width="2" height="1" fill="#8d5a3b"/><rect x="9" y="8" width="3" height="1" fill="#a86f4c"/><rect x="4" y="9" width="8" height="1" fill="#a86f4c"/><rect x="5" y="10" width="2" height="1" fill="#a86f4c"/><rect x="7" y="10" width="2" height="1" fill="#6a3f2f"/><rect x="9" y="10" width="2" height="1" fill="#a86f4c"/><rect x="6" y="11" width="1" height="1" fill="#8d5a3b"/><rect x="7" y="11" width="2" height="1" fill="#a86f4c"/><rect x="9" y="11" width="1" height="1" fill="#8d5a3b"/><rect x="5" y="12" width="6" height="1" fill="#a86f4c"/><rect x="0" y="13" width="6" height="1" fill="#0f6f6c"/><rect x="6" y="13" width="4" height="1" fill="#a86f4c"/><rect x="10" y="13" width="6" height="1" fill="#0f6f6c"/><rect x="0" y="14" width="4" height="1" fill="#0f6f6c"/><rect x="4" y="14" width="8" height="1" fill="#efe3c2"/><rect x="12" y="14" width="4" height="1" fill="#0f6f6c"/><rect x="0" y="15" width="4" height="1" fill="#0f6f6c"/><rect x="4" y="15" width="8" height="1" fill="#efe3c2"/><rect x="12" y="15" width="4" height="1" fill="#0f6f6c"/></svg>
             <div><h3>Manjunatha P</h3><span>CLASS: BUILDER + BREAKER</span></div>
           </div>
           <p class="about-text">Computer science undergraduate in my 7th semester, focused on cybersecurity, machine learning, and backend systems.</p>
@@ -1523,7 +1522,7 @@
   function terrain(y, color, seed) {
     for (let x = 0; x < 320; x += 16) {
       const height = Math.round((Math.sin(x * .025 + seed) * 17 + Math.cos(x * .05 + seed) * 8) / 8) * 8;
-      block(x, y + height, 16, 272 - y - height, color);
+      block(x, y + height, 16, H - y - height, color);
     }
   }
 
@@ -1546,11 +1545,11 @@
   }
   function chaseCreeper(currentX,playerX,dt) {
     const target=Math.max(8,Math.min(290,playerX)), gap=target-currentX;
-    if(Math.abs(gap)<=9)return currentX;
-    return currentX+Math.sign(gap)*Math.min(Math.abs(gap)-9,95*Math.max(0,dt));
+    if(Math.abs(gap)<=16)return currentX;
+    return currentX+Math.sign(gap)*Math.min(Math.abs(gap)-16,30*Math.max(0,dt));
   }
   function creeperCanDamage(creeperX,playerX,hidden) {
-    return !hidden && Math.abs((creeperX+9)-(playerX+9))<=32;
+    return !hidden && Math.abs((creeperX+4)-(playerX+8))<=32;
   }
   function updateCreeper(dt) {
     worldSeconds+=dt;
@@ -1561,7 +1560,8 @@
     }
     // Keep following the moving player's live position during approach and fuse.
     if(phase.stage==="approach"||phase.stage==="fuse") {
-      creeperX=chaseCreeper(creeperX,explorer.hidden?125:explorer.x,dt);
+      const nx=chaseCreeper(creeperX,explorer.hidden?125:explorer.x,dt);
+      creeperMoving=Math.abs(nx-creeperX)>.01; creeperWalk+=Math.abs(nx-creeperX); creeperX=nx;
     }
     if(phase.stage!==creeperLastPhase) {
       if(phase.stage==="fuse")flashHud("SSSSSS…");
@@ -1581,6 +1581,30 @@
     }
   }
 
+  /* Steve, restyled: messy black hair with a fringe, brown skin, light stubble, a stud earring and the cream and teal raglan tee. */
+  function drawSteve(b, py, hurt, l1, l2) {
+    const skin = hurt ? "#ff7770" : "#a86f4c", shade = hurt ? "#c9514c" : "#8d5a3b", hair = hurt ? "#4a1517" : "#16110f";
+    const cream = hurt ? "#ffb9b0" : "#efe3c2", teal = hurt ? "#c02a2a" : "#0f6f6c";
+    b(-11, py, 12, 12, skin);
+    b(-11, py + 11, 12, 1, shade);
+    b(-9, py + 8, 1, 2, "#e8e8f0");
+    b(-11, py, 12, 5, hair);
+    b(-11, py + 5, 3, 3, hair);
+    b(-12, py + 3, 1, 3, hair);
+    b(-8, py - 2, 6, 2, hair);
+    b(-4, py - 3, 3, 1, hair);
+    b(-6, py + 5, 3, 1, hair); b(-2, py + 5, 2, 1, hair);
+    b(-6, py + 6, 2, 2, "#f0ebe2"); b(-5, py + 6, 1, 2, "#1a0f0a");
+    b(-2, py + 6, 2, 2, "#f0ebe2"); b(-1, py + 6, 1, 2, "#1a0f0a");
+    b(-11, py + 12, 12, 11, cream);
+    b(-11, py + 12, 12, 2, teal);
+    b(-11, py + 14, 2, 2, teal);
+    b(-1, py + 14, 2, 2, teal);
+    b(-14, py + 12, 3, 5, teal); b(-14, py + 17, 3, 5, skin);
+    b(1, py + 12, 3, 5, teal); b(1, py + 17, 3, 4, skin);
+    b(-11, py + 23, 5, l1, hurt ? "#a51e2a" : "#4e547b");
+    b(-4, py + 23, 5, l2, hurt ? "#891823" : "#414969");
+  }
   function drawExplorer(t) {
     if(explorer.hidden)return;
     const swing=explorer.moving?Math.round(Math.sin(t*10)):0;
@@ -1592,14 +1616,7 @@
     ctx.save();
     ctx.translate(Math.round(explorer.x)+14+(hurt?Math.round(Math.sin(worldSeconds*65)*2):0),0);
     ctx.scale(explorer.dir,1);
-    block(-11,py,12,12,skin);
-    block(-11,py,12,4,hair);
-    block(-2,py+6,2,2,hurt?"#54151a":"#263d41");
-    block(-11,py+12,12,11,shirt);
-    block(-14,py+12,3,10,skin);
-    block(1,py+12,3,9,skin);
-    block(-11,py+23,5,6-(swing>0?2:0),trousers);
-    block(-4,py+23,5,6-(swing<0?2:0),hurt?"#891823":"#414969");
+    drawSteve(block,py,hurt,6-(swing>0?2:0),6-(swing<0?2:0));
     block(4,py+9,3,13,"#87653d");
     block(1,py+7,13,3,"#9ed2c2");
     ctx.restore();
@@ -1760,11 +1777,11 @@
     // Rain shower
     if (raining(t)) {
       ctx.fillStyle = "#2c3e5030";
-      ctx.fillRect(0, 0, 320, 272);
+      ctx.fillRect(0, 0, 320, H);
       ctx.globalAlpha = .65;
       for (let i = 0; i < 46; i++) {
         const x = (i * 53 + t * 24) % 320;
-        const y = (i * 97 + t * 230) % 272;
+        const y = (i * 97 + t * 230) % H;
         block(x, y, 1, 5, "#d4e8ff");
       }
       ctx.globalAlpha = 1;
@@ -1775,14 +1792,6 @@
   /* Minecraft-styled surface details, morning bee and underground cutaway. */
   function beeCanFly(isNight,isRaining) { return !isNight&&!isRaining; }
   function drawWorldExtras(t) {
-    // Retain redstone; remove all diamond ore.
-    [[89,222],[286,229]].forEach(([x,y])=>{
-      block(x,y,15,15,night?"#505858":"#737b79");
-      block(x+1,y+1,13,13,night?"#3c4342":"#646e6c");
-      [[3,3],[10,2],[7,7],[3,11],[11,10]].forEach(([dx,dy],i)=>
-        block(x+dx,y+dy,i%2?3:4,3,i%2?"#942f38":"#ee5d50"));
-      block(x+7,y+4,2,2,"#fcb5a6");
-    });
     [[11,"#bd493f"],[248,"#90633e"]].forEach(([x,cap])=>{
       const y=groundAt(x);
       block(x+4,y-7,3,7,"#e7d4b4");
@@ -1803,99 +1812,139 @@
     }
   }
 
-  function drawZombieVillager(t) {
-    const sway=Math.round(Math.sin(t*1.7));
-    const x=212+sway,headY=232+Math.round(Math.sin(t*1.1));
-    block(x+3,headY+30,4,5,"#363041");
-    block(x+10,headY+30,4,5,"#2c2c3b");
-    block(x+2,headY+15,14,17,"#665747");
-    block(x+4,headY+16,10,13,"#897260");
-    block(x+1,headY+19,3,12,"#638e57");
-    block(x+16,headY+19,3,11,"#547e4b");
-    block(x+6,headY+17,4,6,"#4d403a");
-    block(x+11,headY+26,4,4,"#3b322e");
-    block(x+3,headY,15,15,"#78aa69");
-    block(x+3,headY,15,3,"#557d48");
-    block(x+3,headY+12,15,3,"#5f8b53");
-    block(x+4,headY+4,13,3,"#4b6242");
-    block(x+5,headY+7,3,2,"#e0a5a0");
-    block(x+13,headY+7,3,2,"#e0a5a0");
-    block(x+6,headY+7,1,2,"#a93435");
-    block(x+14,headY+7,1,2,"#a93435");
-    block(x+9,headY+9,5,8,"#558648");
-    block(x+10,headY+14,3,2,"#466c3d");
+  /* Underground: grass block, 3 dirt blocks, then 16px stone blocks with a blocky cave and coal */
+  const H = 336, BS = 16, ROW0 = 256, CAVE_FLOOR = 320;
+  function h2(a, b) { let n = (a * 374761393 + b * 668265263) | 0; n = (n ^ (n >>> 13)) * 1274126177 | 0; return ((n ^ (n >>> 16)) >>> 0) / 4294967296; }
+  const CAVE_MAP = { 1: "..XXXXX...", 2: ".XXXXXXXX.", 3: ".XXXXXXXXX" };  // rows from y=256, first column = block 9
+  function inCave(x, y) {
+    const m = CAVE_MAP[Math.floor((y - ROW0) / BS)], c = Math.floor(x / BS) - 9;
+    return !!m && c >= 0 && c < m.length && m[c] === "X";
+  }
+  const groundCache = {};
+  function getGround() {
+    const k = night ? 1 : 0;
+    if (groundCache[k]) return groundCache[k];
+    const cv = document.createElement("canvas"); cv.width = 320; cv.height = H;
+    const g = cv.getContext("2d");
+    const px = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+    const P = a => a.map(tone);
+    const dirt = P(["#826042","#7c5b3f","#876647","#785a3e"]), rock = P(["#7b7b7b","#767676","#808080","#727272"]);
+    const wall = P(["#3a3a3a","#343434","#404040","#2e2e2e"]), grass = P(["#79c05a","#6fb552","#86cc62","#5fa347"]);
+    const pk = (p, r) => p[r < .4 ? 0 : r < .7 ? 1 : r < .88 ? 2 : 3];
+    for (let x = 0; x < 320; x += 2) {
+      const g0 = groundAt(x), stoneAt = g0 + 48;
+      for (let y = g0; y < H; y += 2) {
+        const r = h2(x >> 2, y >> 2), d = y - g0;
+        let c;
+        if (y >= ROW0 && inCave(x, y)) c = pk(wall, r);
+        else if (d < 4) c = pk(grass, r);
+        else if (d < 16) c = d < 8 && r < .45 ? pk(grass, r * 2) : pk(dirt, r);
+        else c = y >= stoneAt ? pk(rock, r) : pk(dirt, r);
+        px(x, y, 2, 2, c);
+      }
+    }
+    for (let bx = 0; bx < 20; bx++) for (let r = 0; r < 5; r++) {
+      if (inCave(bx * BS + 1, ROW0 + r * BS + 1)) continue;
+      px(bx * BS, ROW0 + r * BS, BS, 1, "#00000018"); px(bx * BS, ROW0 + r * BS, 1, BS, "#00000018");
+    }
+    const coal = (bx, r) => {
+      for (let j = 0; j < 8; j++) for (let i = 0; i < 8; i++) px(bx * BS + i * 2, ROW0 + r * BS + j * 2, 2, 2, pk(rock, h2(bx * 9 + i, r * 7 + j)));
+      [[1,1],[2,1],[1,2],[5,1],[5,2],[6,2],[3,4],[4,4],[3,5],[1,6],[2,6],[6,5],[6,6]].forEach(([i, j]) => px(bx * BS + i * 2, ROW0 + r * BS + j * 2, 2, 2, "#1c1c1c"));
+      [[1,1],[5,1],[3,4],[6,5]].forEach(([i, j]) => px(bx * BS + i * 2, ROW0 + r * BS + j * 2, 1, 1, "#4a4a4a"));
+    };
+    [[4,1],[5,2],[7,3],[13,0],[19,2],[18,1],[2,3]].forEach(([bx, r]) => coal(bx, r));
+    return (groundCache[k] = cv);
   }
 
+  /* Zombie villager: shambles around the cave with arms out */
+  const zv = { x: 205, dir: 1, tx: 205, wait: 1, t: 0, moving: false };
+  function updateZombie(dt) {
+    zv.t += dt;
+    const gap = zv.tx - zv.x;
+    if (Math.abs(gap) > .5) { zv.moving = true; zv.dir = gap > 0 ? 1 : -1; zv.x += Math.sign(gap) * Math.min(Math.abs(gap), 12 * dt); }
+    else { zv.moving = false; zv.wait -= dt; if (zv.wait <= 0) { zv.tx = 194 + Math.random() * 34; zv.wait = .6 + Math.random() * 2; } }
+  }
+  function drawZombieVillager() {
+    const fx = Math.round(zv.x), fy = CAVE_FLOOR, w = zv.moving ? Math.sin(zv.t * 6) : 0;
+    const sw = Math.round(w * 3), by = fy - (zv.moving ? Math.round(Math.abs(w)) : 0);
+    const arm = Math.round(Math.sin(zv.t * 3.1)), hd = zv.moving ? 0 : Math.round(Math.sin(zv.t * 1.3) * .6) + 1, T = tone;
+    ctx.save(); ctx.translate(fx, 0); ctx.scale(zv.dir, 1);
+    block(2, by - 24 + arm, 13, 4, T("#4a7a40"));
+    [[-sw, w < -.5 ? 2 : 0, "#3f352b"], [sw, w > .5 ? 2 : 0, "#52463a"]].forEach(([o, lift, col]) => {
+      block(-2 + o, by - 12, 4, 12 - lift, T(col));
+      block(-2 + o, by - 3 - lift, 5, 3, T("#262626"));
+    });
+    block(-4, by - 24, 8, 18, T("#6b5239"));
+    block(-4, by - 24, 8, 3, T("#7b6244"));
+    block(-4, by - 14, 8, 2, T("#3a2c1e"));
+    block(-4, by - 8, 8, 2, T("#4a3926"));
+    block(-4, by - 6, 2, 2, T("#4a3926")); block(0, by - 6, 3, 2, T("#4a3926"));
+    block(-4, by - 34 + hd, 8, 10, T("#6fa05f"));
+    block(-4, by - 34 + hd, 8, 2, T("#4f7d45"));
+    block(4, by - 30 + hd, 2, 5, T("#4f8a46"));
+    block(0, by - 31 + hd, 4, 1, "#26301f");
+    block(1, by - 29 + hd, 2, 2, "#f0f0e0"); block(2, by - 29 + hd, 1, 2, "#9b1e1e");
+    block(0, by - 25 + hd, 4, 1, T("#3f6a36"));
+    block(3, by - 22 + arm, 12, 4, T("#78aa69"));
+    block(3, by - 22 + arm, 4, 4, T("#6b5239"));
+    block(13, by - 22 + arm, 2, 4, T("#5f8f52"));
+    ctx.restore();
+  }
   function drawUndergroundCave(t) {
-    const rock=night?"#575553":"#73706b",edge=night?"#343638":"#4c4a49";
-    block(165,219,90,51,edge);
-    block(169,223,82,43,"#131b21");
-    block(173,224,74,38,"#20262a");
-    block(170,219,83,5,rock);
-    block(170,220,11,7,edge);
-    block(193,221,13,4,edge);
-    block(235,219,16,8,edge);
-    block(168,232,5,31,rock);
-    block(248,230,5,36,rock);
-    block(169,264,83,5,rock);
-    [[175,228],[187,225],[238,228],[170,248],[242,249],[180,263],[230,263]].forEach(([x,y],i)=>{
-      block(x,y,7,3,i%2?rock:edge);
-    });
-    [[175,239],[241,237],[178,257]].forEach(([x,y])=>{
-      block(x,y,3,3,"#2c343c");
-      block(x+4,y+2,2,2,"#a5a49a");
-    });
-    // Torch emits a chunky warm halo and visibly flickering flame.
-    const f=Math.floor(t*8)%3;
-    ctx.globalAlpha=.10+(f===0?.06:0);
-    block(178,227,29,32,"#ffb84d");
-    ctx.globalAlpha=1;
-    block(188,244,3,13,"#79502c");
-    block(187,240,5,5,f===0?"#f6ad30":"#f8c048");
-    block(188,236-(f===2?1:0),3,5,"#ffe891");
-    block(189,235-(f===1?1:0),2,3,"#fff7c4");
-    block(190,250,1,4,"#3b2419");
-    drawZombieVillager(t);
+    const tx = 168, ty = CAVE_FLOOR, f = Math.floor(t * 8) % 3, lx = tx, ly = ty - 10, R = 64;
+    for (let y = ly - R; y <= ly + R; y += 4) for (let x = lx - R; x <= lx + R; x += 4) {
+      if (!inCave(x, y)) continue;
+      const d = Math.hypot(x - lx, y - ly) / R;
+      if (d >= 1) continue;
+      ctx.globalAlpha = Math.ceil((1 - d) * 4) / 4 * (.2 + (f === 0 ? .04 : 0));
+      block(x, y, 4, 4, "#ffb84d");
+    }
+    ctx.globalAlpha = 1;
+    block(tx - 1, ty - 10, 2, 10, "#79502c");
+    block(tx - 2, ty - 15, 4, 5, f === 0 ? "#f6ad30" : "#f8c048");
+    block(tx - 1, ty - 18 - (f === 2 ? 1 : 0), 2, 4, "#ffe891");
+    drawZombieVillager();
   }
 
-  function drawCreeperFace(x,y,ink) {
-    block(x+3,y+4,3,4,ink);
-    block(x+10,y+4,3,4,ink);
-    block(x+6,y+8,4,4,ink);
-    block(x+4,y+11,3,4,ink);
-    block(x+9,y+11,3,4,ink);
+  /* Creeper: real proportions (8 head, 8x12 body, two 4x6 legs), mottled texture, swells on fuse */
+  let creeperMoving = false, creeperWalk = 0;
+  const CREEPER_S = 1;
+  const CREEPER_PAL = ["#55b043","#479a37","#68c553"];
+  const CREEPER_FACE = ["........","........",".XX..XX.",".XX..XX.","...XX...","..XXXX..","..XXXX..","..X..X.."];
+  function texel(x, y, i, j, S, c) {
+    const x0 = Math.round(x + i * S), y0 = Math.round(y + j * S);
+    block(x0, y0, Math.round(x + (i + 1) * S) - x0, Math.round(y + (j + 1) * S) - y0, c);
+  }
+  function creeperSprite(S, step, flash) {
+    const col = (i, j, s) => {
+      if (flash) return (i + j) % 2 ? "#ffffff" : "#dff3d6";
+      const r = h2((i >> 1) + s * 17, (j >> 1) + s * 29);
+      return tone(CREEPER_PAL[r < .16 ? 1 : r > .92 ? 2 : 0]);
+    };
+    const part = (ox, oy, tw, th, s) => { for (let j = 0; j < th; j++) for (let i = 0; i < tw; i++) texel(ox, oy, i, j, S, col(i, j, s)); };
+    part(-4 * S, -7 * S - (step === 0 ? S : 0), 4, 7, 3);
+    part(0, -7 * S - (step === 1 ? S : 0), 4, 7, 4);
+    part(-4 * S, -15 * S, 8, 8, 1);
+    part(-4 * S, -23 * S, 8, 8, 2);
+    CREEPER_FACE.forEach((row, j) => [...row].forEach((ch, i) => { if (ch === "X") texel(-4 * S, -23 * S, i, j, S, flash ? "#7d9b79" : "#0b140c"); }));
   }
   function drawCreeper(phase) {
-    if(phase.stage!=="approach"&&phase.stage!=="fuse")return;
-    const x=Math.round(creeperX),y=groundAt(x+9);
-    const flash=phase.stage==="fuse"&&Math.floor(phase.age*9)%2===0;
-    const main=flash?"#e6ffe6":night?"#498b43":"#6abb54";
-    const shade=flash?"#bcebb0":night?"#2f6b31":"#3e8735";
-    const lime=flash?"#ffffff":night?"#61a55a":"#91d270";
-    const ink=flash?"#5d8760":"#172e1b";
-    const walk=phase.stage==="approach"?Math.floor(worldSeconds*8)%2:0;
-    block(x+3,y-6+walk,4,6,shade);
-    block(x+12,y-6+(1-walk),4,6,shade);
-    block(x+1,y-7+(1-walk),3,5,main);
-    block(x+16,y-7+walk,3,5,main);
-    block(x+4,y-21,12,16,main);
-    block(x+4,y-17,3,4,shade);
-    block(x+12,y-14,3,3,lime);
-    block(x+7,y-9,4,3,shade);
-    // Proportional 16px head, pixel-straight Creeper eyes and frown.
-    block(x+2,y-37,16,16,main);
-    block(x+2,y-37,16,2,lime);
-    block(x+2,y-23,16,2,shade);
-    block(x+3,y-35,2,2,shade);
-    block(x+15,y-35,2,3,shade);
-    block(x+2,y-30,2,4,shade);
-    drawCreeperFace(x+2,y-37,ink);
+    if (phase.stage !== "approach" && phase.stage !== "fuse") return;
+    const fuse = phase.stage === "fuse", cx = Math.round(creeperX + 4), fy = groundAt(cx);
+    const flash = fuse && Math.floor(phase.age * 9) % 2 === 0;
+    const swell = fuse ? Math.min(1, phase.progress * 1.2) : 0;
+    block(cx - 6, fy, 12, 2, night ? "#00000040" : "#0000002a");
+    ctx.save();
+    ctx.translate(cx + (fuse ? Math.round(Math.sin(worldSeconds * 60)) : 0), fy);
+    ctx.scale(1 + swell * .26, 1 + swell * .14);
+    creeperSprite(CREEPER_S, fuse || !creeperMoving ? -1 : Math.floor(creeperWalk / 8) % 2, flash);
+    ctx.restore();
   }
 
   function drawCreeperCrater(phase) {
     if (!["blast","crater","recover"].includes(phase.stage))return;
     const healed=phase.stage==="recover"?phase.progress:0;
-    const radius=Math.round(24*(1-healed)),center=Math.round(creeperTarget+9);
+    const radius=Math.round(24*(1-healed)),center=Math.round(creeperTarget+4);
     if(radius<2)return;
     for(let x=center-radius;x<=center+radius;x+=4){
       const depth=Math.max(0,Math.round(11*(1-Math.abs(x-center)/Math.max(radius,1))*(1-healed)));
@@ -1909,7 +1958,7 @@
 
   function drawCreeperBlast(phase) {
     if(phase.stage!=="blast")return;
-    const x=Math.round(creeperTarget+9),y=groundAt(x)-20;
+    const x=Math.round(creeperTarget+4),y=groundAt(x)-20;
     const progress=phase.progress, colors=["#fbf9ed","#d7d9d2","#9d9e99","#f2ce7e","#71594a"];
     ctx.globalAlpha=Math.max(.08,1-progress*.92);
     for(let i=0;i<34;i++){
@@ -1919,7 +1968,7 @@
     }
     if(phase.age<.22){
       ctx.globalAlpha=Math.max(0,.6*(1-phase.age/.22));
-      block(0,0,320,272,"#fff9dd");
+      block(0,0,320,H,"#fff9dd");
     }
     ctx.globalAlpha=1;
   }
@@ -1933,7 +1982,7 @@
       ctx.translate(Math.round(Math.sin(worldSeconds*90)*shake),
         Math.round(Math.cos(worldSeconds*78)*shake));
     }
-    block(-4, -4, 328, 280, night ? "#182b43" : "#94c5bc");
+    block(-4, -4, 328, H + 8, night ? "#182b43" : "#94c5bc");
     if (night) {
       for (let i = 0; i < 31; i++) {
         ctx.globalAlpha = .45 + Math.sin(t * 1.3 + i) * .25;
@@ -1954,17 +2003,7 @@
     terrain(166, night ? "#2b5144" : "#648e61", 3);
     tree(18, 131, .8);
     tree(269, 116, 1.1);
-    for (let x = 0; x < 320; x += 16) {
-      const y = 202 + (x < 48 ? 0 : x < 112 ? -8 : x < 192 ? 0 : x < 256 ? 8 : 0);
-      block(x, y, 16, 272 - y, night ? "#554436" : "#866346");
-      block(x, y, 16, 5, night ? "#5a7c42" : "#8ab450");
-      block(x, y + 5, 16, 5, night ? "#3c5d35" : "#587e36");
-      block(x + 3, y + 10, 4, 5, night ? "#3c5d35" : "#587e36");
-      for (let j = 0; j < 4; j++) {
-        block(x + ((j * 7 + x) % 12), y + 21 + j * 13, 4, 3,
-          j % 2 ? (night ? "#65513e" : "#a07a52") : (night ? "#403b33" : "#6c523e"));
-      }
-    }
+    ctx.drawImage(getGround(), 0, 0);
     drawWorldExtras(t);
     drawUndergroundCave(t);
     drawCreeperCrater(creeperPhase);
@@ -1995,7 +2034,7 @@
     }
     ctx.globalAlpha = 1;
     tree(61, 133, 1.15);
-    [8, 44, 100, 170, 236, 272, 314].forEach((x, i) => {
+    [8, 44, 100, 170, 236, H, 314].forEach((x, i) => {
       const gy = groundAt(x), sw = Math.round(Math.sin(t * 1.6 + i * 1.7));
       const g1 = night ? "#2f5a35" : "#4f8a35", g2 = night ? "#3c6b40" : "#69a845";
       block(x, gy - 4, 1, 4, g1);
@@ -2027,6 +2066,7 @@
 
   function update(dt) {
     updateCreeper(dt);
+    updateZombie(dt);
     updateAnimals(dt);
     if (explorer.jump > 0) explorer.jump = Math.max(0, explorer.jump - dt * 1.8);
     if (explorer.hidden) return;
@@ -2083,7 +2123,7 @@
   $("scene").addEventListener("pointerdown", event => {
     const rect = canvas.getBoundingClientRect();
     const cx = (event.clientX - rect.left) / rect.width * 320;
-    const cy = (event.clientY - rect.top) / rect.height * 272;
+    const cy = (event.clientY - rect.top) / rect.height * H;
     const hit = animals.find(a => {
       const gy = groundAt(a.x + 8);
       return cx > a.x - 8 && cx < a.x + 24 && cy > gy - 26 && cy < gy + 8;
@@ -2196,9 +2236,7 @@
     }
     // explorer standing on the rug
     const bob = Math.round(Math.sin(t * 2)) * (motion.matches ? 0 : 1), px = 54, py = 128 + bob;
-    rb(px + 3, py, 12, 12, "#bd9069"); rb(px + 3, py, 12, 4, "#4f382b"); rb(px + 12, py + 6, 2, 2, "#263d41");
-    rb(px + 3, py + 12, 12, 11, "#4b9b99"); rb(px, py + 12, 3, 10, "#bd9069"); rb(px + 15, py + 12, 3, 9, "#bd9069");
-    rb(px + 3, py + 23, 5, 8 - bob, "#4e547b"); rb(px + 10, py + 23, 5, 8 - bob, "#414969");
+    drawSteve((x, y, w, h, c) => rb(x + px + 14, y, w, h, c), py, false, 8 - bob, 8 - bob);
     rb(px + 4, py + 31 - bob, 4, 1, "#00000040");
     // light
     if (night) { rctx.fillStyle = "#0a0a2a45"; rctx.fillRect(0, 0, 320, 200); }
