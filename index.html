@@ -440,16 +440,101 @@
   .adv-tree { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 14px 0 12px; background: #262626; border: 2px solid #000; background-image: linear-gradient(#ffffff08 1px, transparent 1px), linear-gradient(90deg, #ffffff08 1px, transparent 1px); background-size: 16px 16px; }
   .adv { position: relative; display: grid; place-items: center; }
   .adv:not(:last-child)::before { content: ""; position: absolute; left: 50%; top: calc(50% - 2px); width: 100%; height: 4px; background: #d9d9d9; box-shadow: 0 0 0 1px #000; }
-  .adv button { position: relative; z-index: 1; width: 46px; height: 46px; padding: 3px; border: 0; transition: transform .12s; background: #b0b0b0; }
+  /* Consistent pixel-stepped Minecraft frames: black outline, bevel, icon inset. */
+  .adv button {
+    --frame-face: #c6c6c6;
+    --frame-shade: #7d7d7d;
+    --pixel-corner: 0px;
+    --pixel-step: 0px;
+    position: relative;
+    z-index: 1;
+    width: 46px;
+    height: 46px;
+    padding: 5px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    transition: transform .12s;
+  }
   .adv button:hover, .adv button[aria-pressed="true"] { transform: translateY(-3px); }
   .adv button[aria-pressed="true"] { filter: drop-shadow(0 0 6px #fff); }
-  .adv-in { display: grid; place-items: center; width: 100%; height: 100%; background: #6d6d6d; border: 2px solid #3c3c3c; }
+
+  /* Separate layers keep the black pixel outline even on cut-corner frames. */
+  .adv button::before, .adv button::after,
+  .adv-toast .adv-frame::before, .adv-toast .adv-frame::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+  .adv button::before, .adv-toast .adv-frame::before { inset: 0; background: #000; }
+  .adv button::after, .adv-toast .adv-frame::after {
+    inset: 2px;
+    background: var(--frame-face);
+    box-shadow: inset -3px -3px 0 var(--frame-shade);
+  }
+
+  /* A stepped polygon, not a smooth radius, keeps every corner on pixel grid. */
+  .adv button::before, .adv button::after, .adv button .adv-in,
+  .adv-toast .adv-frame::before, .adv-toast .adv-frame::after, .adv-toast .adv-frame .adv-in {
+    clip-path: polygon(
+      0 var(--pixel-corner),
+      var(--pixel-step) var(--pixel-corner),
+      var(--pixel-step) var(--pixel-step),
+      var(--pixel-corner) var(--pixel-step),
+      var(--pixel-corner) 0,
+      calc(100% - var(--pixel-corner)) 0,
+      calc(100% - var(--pixel-corner)) var(--pixel-step),
+      calc(100% - var(--pixel-step)) var(--pixel-step),
+      calc(100% - var(--pixel-step)) var(--pixel-corner),
+      100% var(--pixel-corner),
+      100% calc(100% - var(--pixel-corner)),
+      calc(100% - var(--pixel-step)) calc(100% - var(--pixel-corner)),
+      calc(100% - var(--pixel-step)) calc(100% - var(--pixel-step)),
+      calc(100% - var(--pixel-corner)) calc(100% - var(--pixel-step)),
+      calc(100% - var(--pixel-corner)) 100%,
+      var(--pixel-corner) 100%,
+      var(--pixel-corner) calc(100% - var(--pixel-step)),
+      var(--pixel-step) calc(100% - var(--pixel-step)),
+      var(--pixel-step) calc(100% - var(--pixel-corner)),
+      0 calc(100% - var(--pixel-corner))
+    );
+  }
+  .adv-in {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    background: #6d6d6d;
+    border: 2px solid #3c3c3c;
+  }
   .adv-ico { width: 26px; height: 26px; shape-rendering: crispEdges; image-rendering: pixelated; }
-  .adv[data-type="task"] button { background: #c6c6c6; box-shadow: inset -3px -3px 0 #7d7d7d, 0 0 0 2px #000; }
-  .adv[data-type="goal"] button { background: #f0c94a; border-radius: 12px; box-shadow: inset -3px -3px 0 #a37f12, 0 0 0 2px #000; }
-  .adv[data-type="goal"] .adv-in { background: #7a6a2b; border-color: #4a3f14; border-radius: 8px; }
-  .adv[data-type="challenge"] button { background: #c07be6; clip-path: polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px)); box-shadow: inset -3px -3px 0 #7b3fa0; }
-  .adv[data-type="challenge"] .adv-in { background: #4a2a66; border-color: #2d1640; }
+
+  .adv[data-type="goal"] button, .adv-toast[data-type="goal"] .adv-frame {
+    --frame-face: #f0c94a;
+    --frame-shade: #a37f12;
+    --pixel-corner: 6px;
+    --pixel-step: 3px;
+  }
+  .adv[data-type="goal"] .adv-in, .adv-toast[data-type="goal"] .adv-in {
+    --pixel-corner: 4px;
+    --pixel-step: 2px;
+    background: #7a6a2b;
+    border-color: #4a3f14;
+  }
+  .adv[data-type="challenge"] button, .adv-toast[data-type="challenge"] .adv-frame {
+    --frame-face: #c07be6;
+    --frame-shade: #7b3fa0;
+    --pixel-corner: 8px;
+    --pixel-step: 4px;
+  }
+  .adv[data-type="challenge"] .adv-in, .adv-toast[data-type="challenge"] .adv-in {
+    --pixel-corner: 5px;
+    --pixel-step: 2px;
+    background: #4a2a66;
+    border-color: #2d1640;
+  }
   .adv-detail { margin-top: 10px; padding: 10px 12px; background: #100010; border: 2px solid #2b0b66; box-shadow: inset 0 0 0 2px #1a0a3d; min-height: 7.4em; }
   .adv-detail-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
   .adv-detail-head span { padding: 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #151515; background: #c6c6c6; }
@@ -462,9 +547,20 @@
 
   .adv-toast { position: fixed; z-index: 70; top: calc(12px + env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: min(320px, calc(100% - 24px)); display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; background: #2c2c2c; border: 2px solid #000; box-shadow: inset 0 0 0 2px #5a5a5a, 6px 6px 0 #0009; transform: translateX(120%); transition: transform .45s cubic-bezier(.2,.9,.3,1); pointer-events: none; }
   .adv-toast.show { transform: translateX(0); }
-  .adv-toast .adv-frame { flex-shrink: 0; width: 44px; height: 44px; padding: 3px; background: #c6c6c6; box-shadow: inset -3px -3px 0 #7d7d7d, 0 0 0 2px #000; }
-  .adv-toast[data-type="goal"] .adv-frame { background: #f0c94a; border-radius: 12px; box-shadow: inset -3px -3px 0 #a37f12, 0 0 0 2px #000; }
-  .adv-toast[data-type="challenge"] .adv-frame { background: #c07be6; clip-path: polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px)); box-shadow: inset -3px -3px 0 #7b3fa0; }
+  .adv-toast .adv-frame {
+    --frame-face: #c6c6c6;
+    --frame-shade: #7d7d7d;
+    --pixel-corner: 0px;
+    --pixel-step: 0px;
+    position: relative;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 5px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
   .adv-toast .adv-in { background: #4a4a4a; }
   .adv-toast-text { min-width: 0; font-size: 13px; line-height: 1.35; }
   .adv-toast-text b { display: block; color: #ffff55; font-weight: 600; }
@@ -472,7 +568,7 @@
   .adv-toast-text span { display: block; color: #fff; overflow-wrap: anywhere; }
   @media (max-width: 480px) {
     .adv-screen { padding: 8px; }
-    .adv button { width: 40px; height: 40px; padding: 2px; }
+    .adv button { width: 40px; height: 40px; padding: 4px; }
     .adv-ico { width: 22px; height: 22px; }
     .adv-detail { min-height: 9em; }
   }
