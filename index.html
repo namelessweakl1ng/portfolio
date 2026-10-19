@@ -330,6 +330,46 @@
   .contrib h3 { margin: 8px 0 4px; font-family: var(--display); font-size: 21px; line-height: 1.25; color: var(--green); }
   .contrib p { margin: 0; font-size: 13px; color: var(--muted); }
 
+
+  /* Minecraft-style GitHub contribution calendar */
+  :root { --gh0:#d5e6c8; --gh1:#9ac87b; --gh2:#5aaa47; --gh3:#327e2e; --gh4:#18551f; }
+  @media(prefers-color-scheme:dark) {
+    :root:not([data-theme="light"]) { --gh0:#1e2a1e; --gh1:#234d2a; --gh2:#2d7b3b; --gh3:#4cab55; --gh4:#a5e063; }
+  }
+  :root[data-theme="dark"] { --gh0:#1e2a1e; --gh1:#234d2a; --gh2:#2d7b3b; --gh3:#4cab55; --gh4:#a5e063; }
+  .github-calendar { --gh-size:11px; --gh-gap:4px; margin-top:24px; padding:19px 20px 16px; min-width:0; background:var(--panel); border:3px solid var(--line-2); box-shadow:inset 3px 3px 0 #ffffff20,inset -3px -3px 0 #0003,5px 5px 0 var(--shadow); }
+  .github-calendar-top,.github-calendar-foot { display:flex; align-items:center; justify-content:space-between; gap:10px 16px; flex-wrap:wrap; }
+  .github-calendar-top { margin-bottom:13px; }
+  .github-calendar-top h3 { display:flex; align-items:center; gap:8px; margin:0; font:700 19px/1.3 var(--display); color:var(--text); }
+  .github-calendar-top svg { width:22px; height:22px; image-rendering:pixelated; shape-rendering:crispEdges; }
+  .github-live { padding:3px 7px; border:2px solid var(--btn-line); background:var(--btn); color:var(--ink); font:700 11px var(--display); }
+  .github-activity-status { margin:0 0 9px; color:var(--muted); font-size:12px; }
+  .github-retry { padding:3px 9px; margin-bottom:9px; border:2px solid var(--line-2); background:var(--inset); color:var(--text); cursor:pointer; font:700 11px var(--display); }
+  .github-chart-scroll { overflow-x:auto; max-width:100%; padding:5px 2px 12px; scrollbar-width:thin; }
+  .github-chart { display:grid; grid-template-columns:24px max-content; column-gap:9px; width:max-content; }
+  .github-weekdays { display:grid; grid-template-rows:repeat(7,var(--gh-size)); gap:var(--gh-gap); margin-top:23px; font:10px/11px var(--body); color:var(--faint); }
+  .github-months { display:grid; grid-template-columns:repeat(var(--gh-weeks,53),var(--gh-size)); gap:var(--gh-gap); height:23px; font:11px/16px var(--display); color:var(--muted); }
+  .github-months span { white-space:nowrap; }
+  .github-heatmap { display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,var(--gh-size)); grid-auto-columns:var(--gh-size); gap:var(--gh-gap); }
+  .github-day { width:var(--gh-size); height:var(--gh-size); padding:0; display:block; border:1px solid #0003; border-radius:0; background:var(--gh0); box-shadow:inset 1px 1px 0 #ffffff24,inset -1px -1px 0 #0003; cursor:pointer; }
+  .github-day[data-level="1"] { background:var(--gh1); }
+  .github-day[data-level="2"] { background:var(--gh2); }
+  .github-day[data-level="3"] { background:var(--gh3); }
+  .github-day[data-level="4"] { background:var(--gh4); }
+  .github-day:hover,.github-day:focus-visible { outline:2px solid var(--gold); outline-offset:1px; position:relative; z-index:1; }
+  .github-day.pad { visibility:hidden; pointer-events:none; }
+  .github-day.unknown { background:var(--inset); opacity:.5; }
+  .github-calendar-foot { border-top:1px dashed var(--line); padding-top:12px; font-size:12px; color:var(--muted); }
+  .github-calendar-foot a { color:var(--green); font-weight:600; text-underline-offset:3px; }
+  #githubDayInfo { margin:0; flex:1 1 235px; min-height:1.5em; overflow-wrap:anywhere; }
+  .github-legend { display:inline-flex; align-items:center; gap:3px; white-space:nowrap; font:11px var(--body); }
+  .github-legend i { width:10px; height:10px; display:block; background:var(--gh0); border:1px solid #0003; }
+  .github-legend i:nth-of-type(2) { background:var(--gh1); }
+  .github-legend i:nth-of-type(3) { background:var(--gh2); }
+  .github-legend i:nth-of-type(4) { background:var(--gh3); }
+  .github-legend i:nth-of-type(5) { background:var(--gh4); }
+  @media(max-width:480px) { .github-calendar { padding:13px 12px 12px; } .github-calendar-top h3 { font-size:17px; } }
+
   /* Stack matrix */
   .matrix { display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); gap: 4px; align-items: stretch; }
   .matrix .h { font-family: var(--display); font-size: 14px; font-weight: 700; text-align: center; color: var(--green); padding-bottom: 6px; overflow-wrap: anywhere; }
@@ -859,9 +899,33 @@
           <div class="matrix-total" id="matrixTotal"></div>
         </div>
       </div>
+
+      <div class="github-calendar" id="githubActivity" aria-labelledby="githubActivityTitle">
+        <div class="github-calendar-top">
+          <h3 id="githubActivityTitle"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-grass"/></svg>GitHub activity</h3>
+          <span class="github-live">LIVE · LAST 12 MONTHS</span>
+        </div>
+        <p class="github-activity-status" id="githubActivityStatus" role="status" aria-live="polite">Loading GitHub activity…</p>
+        <button id="githubRetry" type="button" class="github-retry" hidden>Try again</button>
+        <div class="github-chart-scroll" id="githubChartScroll">
+          <div class="github-chart">
+            <div class="github-weekdays" aria-hidden="true"><span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span></div>
+            <div>
+              <div id="githubMonths" class="github-months" aria-hidden="true"></div>
+              <div id="githubHeatmap" class="github-heatmap" role="group" aria-label="Daily GitHub contributions during the past year"></div>
+            </div>
+          </div>
+        </div>
+        <div class="github-calendar-foot">
+          <p id="githubDayInfo" aria-live="polite">Focus or tap a square for that day's activity.</p>
+          <span class="github-legend" aria-label="Contribution intensity, less to more">Less <i></i><i></i><i></i><i></i><i></i> More</span>
+          <a href="https://github.com/namelessweakl1ng?tab=overview" target="_blank" rel="noopener noreferrer">View GitHub ↗</a>
+        </div>
+        <noscript><p>Enable JavaScript to view the live contribution calendar.</p></noscript>
+      </div>
     </section>
 
-    <section id="about" aria-labelledby="aboutTitle">
+    <section id="about" aria-labelledby="aboutTitle"
       <div class="section-title">
         <div>
           <div class="section-kicker">Meet the player</div>
@@ -1051,6 +1115,126 @@
   $("year").textContent = new Date().getFullYear();
   $("emailText").textContent = EMAIL;
   $("emailLink").href = "mailto:" + EMAIL;
+
+
+  /* Live public GitHub history. The API caches responses for about an hour. */
+  const GITHUB_ACTIVITY_URL = "https://github-contributions-api.jogruber.de/v4/namelessweakl1ng?y=last";
+  const githubDayKey = d => [d.getFullYear(), String(d.getMonth()+1).padStart(2,"0"), String(d.getDate()).padStart(2,"0")].join("-");
+  function prepareGithubActivity(payload, now = new Date()) {
+    if (!payload || !Array.isArray(payload.contributions)) throw new Error("Invalid GitHub activity response");
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const first = new Date(end);
+    first.setDate(first.getDate()-364);
+    const cursor = new Date(first);
+    cursor.setDate(cursor.getDate()-cursor.getDay());
+    const counts = new Map();
+    payload.contributions.forEach(item => {
+      if (item && /^\d{4}-\d{2}-\d{2}$/.test(item.date) && Number.isInteger(item.count) && item.count>=0
+          && Number.isInteger(item.level) && item.level>=0 && item.level<=4) {
+        counts.set(item.date, {count:item.count,level:item.level});
+      }
+    });
+    const days = [], months = [];
+    let lastMonth = -1, total = 0, known = 0;
+    for (const d = new Date(cursor); d<=end; d.setDate(d.getDate()+1)) {
+      const pad = d<first, key=githubDayKey(d), item=pad?null:counts.get(key);
+      if (!pad) {
+        if (lastMonth!==d.getMonth()) {
+          months.push({name:d.toLocaleString("en",{month:"short"}),column:Math.floor(days.length/7)+1});
+          lastMonth=d.getMonth();
+        }
+        if (item) { total+=item.count; known++; }
+      }
+      days.push({date:key,pad:pad,count:item?item.count:null,level:item?item.level:0});
+    }
+    if (!known) throw new Error("No contribution history available");
+    return {days:days,months:months,total:total,weeks:Math.ceil(days.length/7),known:known};
+  }
+  function renderGithubActivity(model) {
+    const grid=$("githubHeatmap"), months=$("githubMonths");
+    grid.replaceChildren(); months.replaceChildren();
+    grid.style.setProperty("--gh-weeks",model.weeks);
+    months.style.setProperty("--gh-weeks",model.weeks);
+    const fragment=document.createDocumentFragment(), buttons=[];
+    model.days.forEach(day => {
+      if (day.pad) {
+        const blank=document.createElement("span");
+        blank.className="github-day pad";
+        blank.setAttribute("aria-hidden","true");
+        fragment.appendChild(blank);
+        return;
+      }
+      const button=document.createElement("button");
+      button.type="button";
+      button.className="github-day"+(day.count===null?" unknown":"");
+      button.dataset.level=day.level;
+      const text=day.count===null?"No data":day.count+" contribution"+(day.count===1?"":"s");
+      const parts=day.date.split("-").map(Number);
+      const dateText=new Date(parts[0],parts[1]-1,parts[2]).toLocaleDateString("en",{month:"long",day:"numeric",year:"numeric"});
+      button.dataset.info=text+" on "+dateText;
+      button.setAttribute("aria-label",button.dataset.info);
+      button.title=button.dataset.info;
+      button.tabIndex=-1;
+      fragment.appendChild(button);
+      buttons.push(button);
+    });
+    grid.appendChild(fragment);
+    const labels=document.createDocumentFragment();
+    model.months.forEach(month => {
+      const el=document.createElement("span");
+      el.style.gridColumn=month.column;
+      el.textContent=month.name;
+      labels.appendChild(el);
+    });
+    months.appendChild(labels);
+    const show=button => { if(button && button.dataset.info) $("githubDayInfo").textContent=button.dataset.info; };
+    if(buttons.length) {
+      buttons[buttons.length-1].tabIndex=0;
+      show(buttons[buttons.length-1]);
+    }
+    grid.onfocusin=e=>show(e.target);
+    grid.onclick=e=>show(e.target);
+    grid.onkeydown=e=>{
+      const i=buttons.indexOf(document.activeElement);
+      if(i<0)return;
+      const steps={ArrowLeft:-7,ArrowRight:7,ArrowUp:-1,ArrowDown:1};
+      let target=i;
+      if(e.key==="Home") target=0;
+      else if(e.key==="End") target=buttons.length-1;
+      else if(Object.prototype.hasOwnProperty.call(steps,e.key)) target=Math.max(0,Math.min(buttons.length-1,i+steps[e.key]));
+      else return;
+      e.preventDefault();
+      buttons[i].tabIndex=-1; buttons[target].tabIndex=0; buttons[target].focus();
+    };
+    $("githubActivityStatus").textContent=model.total.toLocaleString()+" contributions in the last 12 months · @namelessweakl1ng";
+  }
+  let githubActivityLoading=false, githubActivityDate="";
+  async function loadGithubActivity() {
+    if(githubActivityLoading)return;
+    githubActivityLoading=true;
+    $("githubRetry").hidden=true;
+    $("githubActivityStatus").textContent="Loading GitHub activity…";
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),10000);
+    try {
+      const response=await fetch(GITHUB_ACTIVITY_URL,{signal:controller.signal});
+      if(!response.ok)throw new Error("Request failed");
+      renderGithubActivity(prepareGithubActivity(await response.json()));
+      githubActivityDate=githubDayKey(new Date());
+    } catch(error) {
+      $("githubActivityStatus").textContent="Could not load GitHub activity. Try again or view it directly on GitHub.";
+      $("githubRetry").hidden=false;
+    } finally {
+      clearTimeout(timeout);
+      githubActivityLoading=false;
+    }
+  }
+  $("githubRetry").addEventListener("click",loadGithubActivity);
+  loadGithubActivity();
+  const refreshGithubActivity=()=>{if(!document.hidden && githubActivityDate!==githubDayKey(new Date()))loadGithubActivity();};
+  addEventListener("focus",refreshGithubActivity);
+  document.addEventListener("visibilitychange",refreshGithubActivity);
+  setInterval(refreshGithubActivity,60*60*1000);
 
   const projects = [
     {
