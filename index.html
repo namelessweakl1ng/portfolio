@@ -777,7 +777,7 @@
           <span>● LIVE</span>
         </div>
         <div class="scene" id="scene">
-          <canvas id="worldCanvas" width="320" height="272" role="img" aria-label="Animated Minecraft-inspired pixel world with a cabin, mobs, ore, and a Creeper blast that heals and repeats every three minutes"></canvas>
+          <canvas id="worldCanvas" width="320" height="272" role="img" aria-label="Animated Minecraft-inspired pixel world with a daylight bee, torchlit zombie-villager cave, and a Creeper chasing the explorer, causing a brief damage flash before the ground regenerates"></canvas>
           <div class="scene-hud" id="sceneHud">OVERWORLD / DAY 01</div>
         </div>
         <div class="scene-controls">
@@ -1472,7 +1472,7 @@
   let lastFrame = 0;
   ctx.imageSmoothingEnabled = false;
 
-  const explorer = { x: 129, tx: 129, dir: 1, moving: false, wait: 2, goal: "", jump: 0 };
+  const explorer = { x: 129, tx: 129, dir: 1, moving: false, wait: 2, goal: "", jump: 0, hurtUntil: 0 };
   let hudMessage = "";
   let hudTimeout;
   let hudX = null;
@@ -1530,12 +1530,13 @@
   /* Foreground-only, repeating Creeper encounter. */
   const CREEPER_FIRST_APPEARANCE = 10;
   const CREEPER_CYCLE_SECONDS = 180;
-  let worldSeconds = 0, creeperTarget = 126, creeperCycleSeen = -1, creeperLastPhase = "waiting";
+  let worldSeconds = 0, creeperX = -28, creeperTarget = 126;
+  let creeperCycleSeen = -1, creeperLastPhase = "waiting";
+
   function creeperPhaseAt(seconds) {
-    if (seconds < CREEPER_FIRST_APPEARANCE) return {stage:"waiting", age:-1, progress:0, cycle:-1};
-    const cycle = Math.floor((seconds - CREEPER_FIRST_APPEARANCE) / CREEPER_CYCLE_SECONDS);
-    // Round to milliseconds so the 180-second loop has exact phase boundaries.
-    const age = Math.round(((seconds - CREEPER_FIRST_APPEARANCE) - cycle*CREEPER_CYCLE_SECONDS)*1000)/1000;
+    if (seconds < CREEPER_FIRST_APPEARANCE) return {stage:"waiting",age:-1,progress:0,cycle:-1};
+    const cycle = Math.floor((seconds-CREEPER_FIRST_APPEARANCE)/CREEPER_CYCLE_SECONDS);
+    const age = Math.round(((seconds-CREEPER_FIRST_APPEARANCE)-cycle*CREEPER_CYCLE_SECONDS)*1000)/1000;
     if (age < 5.6) return {stage:"approach",age,progress:age/5.6,cycle};
     if (age < 7) return {stage:"fuse",age:age-5.6,progress:(age-5.6)/1.4,cycle};
     if (age < 8.2) return {stage:"blast",age:age-7,progress:(age-7)/1.2,cycle};
@@ -1543,39 +1544,64 @@
     if (age < 16) return {stage:"recover",age:age-7,progress:(age-12)/4,cycle};
     return {stage:"waiting",age:age-7,progress:1,cycle};
   }
+  function chaseCreeper(currentX,playerX,dt) {
+    const target=Math.max(8,Math.min(290,playerX)), gap=target-currentX;
+    if(Math.abs(gap)<=9)return currentX;
+    return currentX+Math.sign(gap)*Math.min(Math.abs(gap)-9,95*Math.max(0,dt));
+  }
+  function creeperCanDamage(creeperX,playerX,hidden) {
+    return !hidden && Math.abs((creeperX+9)-(playerX+9))<=32;
+  }
   function updateCreeper(dt) {
-    worldSeconds += dt;
-    const phase = creeperPhaseAt(worldSeconds);
-    if (phase.cycle >= 0 && phase.cycle !== creeperCycleSeen) {
-      creeperTarget = Math.max(85, Math.min(148, explorer.x));
-      creeperCycleSeen = phase.cycle;
+    worldSeconds+=dt;
+    const phase=creeperPhaseAt(worldSeconds);
+    if(phase.cycle>=0&&phase.cycle!==creeperCycleSeen) {
+      creeperX=-28;
+      creeperCycleSeen=phase.cycle;
     }
-    if (phase.stage !== creeperLastPhase) {
-      if (phase.stage === "fuse") flashHud("SSSSSS…");
-      if (phase.stage === "blast") flashHud("CREEPER! BOOM!");
-      if (phase.stage === "recover") flashHud("WORLD REGENERATING…");
-      creeperLastPhase = phase.stage;
+    // Keep following the moving player's live position during approach and fuse.
+    if(phase.stage==="approach"||phase.stage==="fuse") {
+      creeperX=chaseCreeper(creeperX,explorer.hidden?125:explorer.x,dt);
+    }
+    if(phase.stage!==creeperLastPhase) {
+      if(phase.stage==="fuse")flashHud("SSSSSS…");
+      if(phase.stage==="blast") {
+        creeperTarget=creeperX;
+        if(creeperCanDamage(creeperTarget,explorer.x,explorer.hidden)) {
+          explorer.hurtUntil=worldSeconds+.34;
+          explorer.jump=.38;
+          explorer.x=Math.max(4,Math.min(290,explorer.x+(explorer.x>=creeperTarget?7:-7)));
+          explorer.tx=explorer.x;
+          explorer.goal="";
+        }
+        flashHud("CREEPER! BOOM!");
+      }
+      if(phase.stage==="recover")flashHud("WORLD REGENERATING…");
+      creeperLastPhase=phase.stage;
     }
   }
 
   function drawExplorer(t) {
-    if (explorer.hidden) return;
-    const swing = explorer.moving ? Math.round(Math.sin(t * 10)) : 0;
-    const bob = explorer.moving ? Math.abs(swing) : 0;
-    const py = 173 - bob - (explorer.jump > 0 ? Math.round(Math.sin(explorer.jump * Math.PI) * 10) : 0);
+    if(explorer.hidden)return;
+    const swing=explorer.moving?Math.round(Math.sin(t*10)):0;
+    const bob=explorer.moving?Math.abs(swing):0;
+    const py=173-bob-(explorer.jump>0?Math.round(Math.sin(explorer.jump*Math.PI)*10):0);
+    const hurt=!motion.matches&&worldSeconds<explorer.hurtUntil;
+    const skin=hurt?"#ff7770":"#bd9069",hair=hurt?"#8c292b":"#4f382b";
+    const shirt=hurt?"#ec3636":"#4b9b99",trousers=hurt?"#a51e2a":"#4e547b";
     ctx.save();
-    ctx.translate(Math.round(explorer.x) + 14, 0);
-    ctx.scale(explorer.dir, 1);
-    block(-11, py, 12, 12, "#bd9069");
-    block(-11, py, 12, 4, "#4f382b");
-    block(-2, py + 6, 2, 2, "#263d41");
-    block(-11, py + 12, 12, 11, "#4b9b99");
-    block(-14, py + 12, 3, 10, "#bd9069");
-    block(1, py + 12, 3, 9, "#bd9069");
-    block(-11, py + 23, 5, 6 - (swing > 0 ? 2 : 0), "#4e547b");
-    block(-4, py + 23, 5, 6 - (swing < 0 ? 2 : 0), "#414969");
-    block(4, py + 9, 3, 13, "#87653d");
-    block(1, py + 7, 13, 3, "#9ed2c2");
+    ctx.translate(Math.round(explorer.x)+14+(hurt?Math.round(Math.sin(worldSeconds*65)*2):0),0);
+    ctx.scale(explorer.dir,1);
+    block(-11,py,12,12,skin);
+    block(-11,py,12,4,hair);
+    block(-2,py+6,2,2,hurt?"#54151a":"#263d41");
+    block(-11,py+12,12,11,shirt);
+    block(-14,py+12,3,10,skin);
+    block(1,py+12,3,9,skin);
+    block(-11,py+23,5,6-(swing>0?2:0),trousers);
+    block(-4,py+23,5,6-(swing<0?2:0),hurt?"#891823":"#414969");
+    block(4,py+9,3,13,"#87653d");
+    block(1,py+7,13,3,"#9ed2c2");
     ctx.restore();
   }
 
@@ -1746,15 +1772,16 @@
   }
 
 
-  /* Pixel ore, mushrooms and bee match the native 320x272 canvas. */
+  /* Minecraft-styled surface details, morning bee and underground cutaway. */
+  function beeCanFly(isNight,isRaining) { return !isNight&&!isRaining; }
   function drawWorldExtras(t) {
-    [[37,228,"#62e9e0"],[89,222,"#e85e50"],[262,240,"#62e9e0"],[288,227,"#e85e50"]].forEach(([x,y,gem]) => {
+    // Retain redstone; remove all diamond ore.
+    [[89,222],[286,229]].forEach(([x,y])=>{
       block(x,y,15,15,night?"#505858":"#737b79");
       block(x+1,y+1,13,13,night?"#3c4342":"#646e6c");
-      [[3,3],[10,2],[7,7],[3,11],[11,10]].forEach(([dx,dy],i)=>{
-        block(x+dx,y+dy,i%2?3:4,3,night?"#447475":gem);
-      });
-      block(x+7,y+4,2,2,"#ebfff6");
+      [[3,3],[10,2],[7,7],[3,11],[11,10]].forEach(([dx,dy],i)=>
+        block(x+dx,y+dy,i%2?3:4,3,i%2?"#942f38":"#ee5d50"));
+      block(x+7,y+4,2,2,"#fcb5a6");
     });
     [[11,"#bd493f"],[248,"#90633e"]].forEach(([x,cap])=>{
       const y=groundAt(x);
@@ -1764,30 +1791,105 @@
       block(x+3,y-10,2,2,"#fff1dc");
       block(x+7,y-12,2,2,"#fff1dc");
     });
-    const x=Math.round(113+Math.sin(t*.55)*19), y=Math.round(103+Math.sin(t*2.2)*5);
-    block(x,y,14,8,"#dfad34");
-    block(x+2,y+1,4,7,"#322d25");
-    block(x+9,y+1,3,7,"#322d25");
-    block(x+12,y+2,2,2,"#ffedac");
-    block(x+13,y+3,1,1,"#191b1e");
-    block(x+2,y-5-Math.round(Math.sin(t*13)),5,5,"#e8f6ff");
-    block(x+8,y-6+Math.round(Math.sin(t*13)),5,5,"#e8f6ff");
+    if(beeCanFly(night,raining(t))) {
+      const x=Math.round(113+Math.sin(t*.55)*19),y=Math.round(103+Math.sin(t*2.2)*5);
+      block(x,y,14,8,"#dfad34");
+      block(x+2,y+1,4,7,"#322d25");
+      block(x+9,y+1,3,7,"#322d25");
+      block(x+12,y+2,2,2,"#ffedac");
+      block(x+13,y+3,1,1,"#191b1e");
+      block(x+2,y-5-Math.round(Math.sin(t*13)),5,5,"#e8f6ff");
+      block(x+8,y-6+Math.round(Math.sin(t*13)),5,5,"#e8f6ff");
+    }
   }
 
+  function drawZombieVillager(t) {
+    const sway=Math.round(Math.sin(t*1.7));
+    const x=212+sway,headY=232+Math.round(Math.sin(t*1.1));
+    block(x+3,headY+30,4,5,"#363041");
+    block(x+10,headY+30,4,5,"#2c2c3b");
+    block(x+2,headY+15,14,17,"#665747");
+    block(x+4,headY+16,10,13,"#897260");
+    block(x+1,headY+19,3,12,"#638e57");
+    block(x+16,headY+19,3,11,"#547e4b");
+    block(x+6,headY+17,4,6,"#4d403a");
+    block(x+11,headY+26,4,4,"#3b322e");
+    block(x+3,headY,15,15,"#78aa69");
+    block(x+3,headY,15,3,"#557d48");
+    block(x+3,headY+12,15,3,"#5f8b53");
+    block(x+4,headY+4,13,3,"#4b6242");
+    block(x+5,headY+7,3,2,"#e0a5a0");
+    block(x+13,headY+7,3,2,"#e0a5a0");
+    block(x+6,headY+7,1,2,"#a93435");
+    block(x+14,headY+7,1,2,"#a93435");
+    block(x+9,headY+9,5,8,"#558648");
+    block(x+10,headY+14,3,2,"#466c3d");
+  }
+
+  function drawUndergroundCave(t) {
+    const rock=night?"#575553":"#73706b",edge=night?"#343638":"#4c4a49";
+    block(165,219,90,51,edge);
+    block(169,223,82,43,"#131b21");
+    block(173,224,74,38,"#20262a");
+    block(170,219,83,5,rock);
+    block(170,220,11,7,edge);
+    block(193,221,13,4,edge);
+    block(235,219,16,8,edge);
+    block(168,232,5,31,rock);
+    block(248,230,5,36,rock);
+    block(169,264,83,5,rock);
+    [[175,228],[187,225],[238,228],[170,248],[242,249],[180,263],[230,263]].forEach(([x,y],i)=>{
+      block(x,y,7,3,i%2?rock:edge);
+    });
+    [[175,239],[241,237],[178,257]].forEach(([x,y])=>{
+      block(x,y,3,3,"#2c343c");
+      block(x+4,y+2,2,2,"#a5a49a");
+    });
+    // Torch emits a chunky warm halo and visibly flickering flame.
+    const f=Math.floor(t*8)%3;
+    ctx.globalAlpha=.10+(f===0?.06:0);
+    block(178,227,29,32,"#ffb84d");
+    ctx.globalAlpha=1;
+    block(188,244,3,13,"#79502c");
+    block(187,240,5,5,f===0?"#f6ad30":"#f8c048");
+    block(188,236-(f===2?1:0),3,5,"#ffe891");
+    block(189,235-(f===1?1:0),2,3,"#fff7c4");
+    block(190,250,1,4,"#3b2419");
+    drawZombieVillager(t);
+  }
+
+  function drawCreeperFace(x,y,ink) {
+    block(x+3,y+4,3,4,ink);
+    block(x+10,y+4,3,4,ink);
+    block(x+6,y+8,4,4,ink);
+    block(x+4,y+11,3,4,ink);
+    block(x+9,y+11,3,4,ink);
+  }
   function drawCreeper(phase) {
     if(phase.stage!=="approach"&&phase.stage!=="fuse")return;
-    const x=Math.round(-20+(creeperTarget+20)*(phase.stage==="approach"?phase.progress:1));
-    const y=groundAt(x+9);
+    const x=Math.round(creeperX),y=groundAt(x+9);
     const flash=phase.stage==="fuse"&&Math.floor(phase.age*9)%2===0;
-    const green=flash?"#e3ffdb":night?"#408d45":"#68c35a";
-    const shade=flash?"#91ec89":night?"#246732":"#398b3b";
-    block(x+2,y-5,6,5,shade); block(x+10,y-5,6,5,shade);
-    block(x+4,y-17,11,13,shade);
-    block(x,y-34,19,19,green);
-    block(x+2,y-32,3,3,shade); block(x+14,y-20,3,3,shade);
-    const face=flash?"#456a43":"#173123";
-    block(x+4,y-28,4,5,face);block(x+12,y-28,4,5,face);
-    block(x+8,y-24,4,5,face);block(x+5,y-20,4,5,face);block(x+12,y-20,4,5,face);
+    const main=flash?"#e6ffe6":night?"#498b43":"#6abb54";
+    const shade=flash?"#bcebb0":night?"#2f6b31":"#3e8735";
+    const lime=flash?"#ffffff":night?"#61a55a":"#91d270";
+    const ink=flash?"#5d8760":"#172e1b";
+    const walk=phase.stage==="approach"?Math.floor(worldSeconds*8)%2:0;
+    block(x+3,y-6+walk,4,6,shade);
+    block(x+12,y-6+(1-walk),4,6,shade);
+    block(x+1,y-7+(1-walk),3,5,main);
+    block(x+16,y-7+walk,3,5,main);
+    block(x+4,y-21,12,16,main);
+    block(x+4,y-17,3,4,shade);
+    block(x+12,y-14,3,3,lime);
+    block(x+7,y-9,4,3,shade);
+    // Proportional 16px head, pixel-straight Creeper eyes and frown.
+    block(x+2,y-37,16,16,main);
+    block(x+2,y-37,16,2,lime);
+    block(x+2,y-23,16,2,shade);
+    block(x+3,y-35,2,2,shade);
+    block(x+15,y-35,2,3,shade);
+    block(x+2,y-30,2,4,shade);
+    drawCreeperFace(x+2,y-37,ink);
   }
 
   function drawCreeperCrater(phase) {
@@ -1864,6 +1966,7 @@
       }
     }
     drawWorldExtras(t);
+    drawUndergroundCave(t);
     drawCreeperCrater(creeperPhase);
     block(180, 159, 58, 46, night ? "#806345" : "#b4905b");
     for (let y = 164; y < 203; y += 9) block(180, y, 58, 2, night ? "#5f4b39" : "#8c693f");
@@ -1908,9 +2011,10 @@
     });
     drawAnimals(t);
     drawCreeper(creeperPhase);
-    drawExplorer(t);
     drawFx(t);
     drawCreeperBlast(creeperPhase);
+    // Place the hurt player above blast particles so the red flash is visible.
+    drawExplorer(t);
     if (night) {
       for (let i = 0; i < 8; i++) {
         ctx.globalAlpha = .35 + Math.sin(t * 2 + i) * .3;
@@ -1956,6 +2060,8 @@
     if (motion.matches) {
       worldSeconds=0;
       creeperCycleSeen=-1;
+      creeperX=-28;
+      explorer.hurtUntil=0;
       creeperLastPhase="waiting";
     }
     render(performance.now());
