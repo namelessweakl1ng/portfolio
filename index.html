@@ -1148,6 +1148,9 @@
       days.push({date:key,pad:pad,count:item?item.count:null,level:item?item.level:0});
     }
     if (!known) throw new Error("No contribution history available");
+    // The first visible month can be only a few days long; omit its label
+    // when the next label would collide, without removing any contribution days.
+    if (months.length>1 && months[1].column-months[0].column<3) months.shift();
     return {days:days,months:months,total:total,weeks:Math.ceil(days.length/7),known:known};
   }
   function renderGithubActivity(model) {
